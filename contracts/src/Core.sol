@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.3;
-
+pragma solidity ^0.8.23;
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import {UD60x18, wrap} from "@prb/math/UD60x18.sol";
+import "./interface/IConnector.sol";
 
 contract Core is ERC721("score", "SCR") {
 
@@ -14,7 +15,7 @@ contract Core is ERC721("score", "SCR") {
 
     uint256 id = 1; // rename
     uint256 userId = 1; // rename
-    mapping(uint256 => address) connectorId;
+    mapping(uint256 => address) connectorId; // rename
     mapping(address => User) userInfo;
     mapping(address => uint256) protocolToConnector;
     mapping(address => bool) whitelistedTokens;
@@ -23,11 +24,16 @@ contract Core is ERC721("score", "SCR") {
         require(userInfo[addr].id != 0, "User not registered");
         _;
     }
-    function aggregateScores(address user, uint256[] calldata ids) public {
+    function aggregateScores(address user, uint256[] calldata ids) public returns (uint256) {
         uint length = ids.length;
+        uint sum = 0;
         for (uint i = 0; i < length; i++) {
             // TODO: need interface
+            require(connectorId[ids[i]] != address(0), "Invalid id");
+            sum += IConnector(connectorId[ids[i]]).getCibilScore(user);
         }
+
+        return sum / length;
     }
 
     function userRegistration() public {
