@@ -14,15 +14,19 @@ import {
   Text,
   Flex,
   Button,
+  InputGroup,
+  InputRightElement,
+  InputRightAddon,
 } from "@chakra-ui/react";
 import MasterLayout from "@/components/MasterLayout";
-import { ChevronLeftIcon } from "@chakra-ui/icons";
+import { ChevronDownIcon, ChevronLeftIcon } from "@chakra-ui/icons";
 import Link from "next/link";
 import { DarkButton } from "@/components/DarkButton";
 
-const Aave = () => {
+const Uniswap = () => {
   const [balance, setBalance] = useState<string>("0");
   const [amount, setAmount] = useState<string>();
+  const [outputAmt, setOutputAmt] = useState<string>();
 
   return (
     <MasterLayout hideConnectWalletBtn={false}>
@@ -40,12 +44,12 @@ const Aave = () => {
               </Link>
             </Button>
           </Text>
-          <Heading>Aave</Heading>
+          <Heading>Uniswap</Heading>
           <Spacer />
         </Flex>
         <FormControl mt={14}>
           <Flex>
-            <FormLabel>Amount to deposit</FormLabel>
+            <FormLabel>Amount to swap</FormLabel>
             <Spacer />
             <HStack fontSize={"sm"} cursor="pointer">
               <Text>Balance: </Text>
@@ -58,18 +62,37 @@ const Aave = () => {
               </Text>
             </HStack>
           </Flex>
-          <Input
-            type="number"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-          />
+          <InputGroup>
+            <Input
+              type="number"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+            />
+            <InputRightAddon minW="5rem">
+              <Center>ETH</Center>
+            </InputRightAddon>
+          </InputGroup>
+        </FormControl>
+        <Center py={4}>
+          <Button>
+            <ChevronDownIcon />
+          </Button>
+        </Center>
+        <FormControl>
+          <FormLabel>Amount to receive</FormLabel>
+          <InputGroup>
+            <Input type="number" value={outputAmt} isReadOnly />
+            <InputRightAddon minW="5rem">
+              <Center>USDC</Center>
+            </InputRightAddon>
+          </InputGroup>
         </FormControl>
         <Center mt={4}>
-          <DarkButton>Deposit</DarkButton>
+          <DarkButton>Swap</DarkButton>
         </Center>
       </Container>
     </MasterLayout>
   );
 };
 
-export default Aave;
+export default Uniswap;
