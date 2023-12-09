@@ -78,8 +78,6 @@ contract Connector is IConnector, AccessControlEnumerable {
         return Generator.generateScore(_userScore);
     }
 
-    function calculateNewScore(uint256 x) external {}
-
     // from core
     function enterSubscriptionWhitelist() external {}
 
