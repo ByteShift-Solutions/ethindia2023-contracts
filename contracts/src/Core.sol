@@ -6,21 +6,18 @@ import {IConnector} from "./interface/IConnector.sol";
 import {SVG} from "./SVG.sol";
 import {UD60x18, wrap} from "@prb/math/UD60x18.sol";
 
-
-
 contract Core is ERC721("score", "SCR") {
 
-struct User {
-    uint256 id;
-    uint256 nativeSecurity;
-    mapping(address => uint256) erc20Security;
-}
-struct Score {
-    uint256 connectorId;
-    uint256 score;
-}
+    struct User {
+        uint256 id;
+        uint256 nativeSecurity;
+        mapping(address => uint256) erc20Security;
+    }
+    struct Score {
+        uint256 connectorId;
+        uint256 score;
+    }
 
-contract Core is ERC721("score", "SCR") {
     uint256 id = 1; // rename
     uint256 userId = 1; // rename
     mapping(uint256 => address) public connectorId; // rename
