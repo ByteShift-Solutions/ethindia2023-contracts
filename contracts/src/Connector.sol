@@ -5,6 +5,6 @@ pragma solidity 0.8.23;
 contract Connector {
     // code to define the equation concerned
     // code to interact with the generator library
-    // code to update the scores
+    // and update the scores
     // interaction interface for the core ( aggregator )
 }
