@@ -18,7 +18,7 @@ library SVG {
             Strings.toString(aggregateScore),
             '</text><text y="170px" x="32px" fill="white" font-family="\'Courier New\', monospace" font-weight="200" font-size="14px">Native Securiy: ',
             Strings.toString(nativeSecurity),
-            "</svg>"
+            "</text></g></svg>"
         );
     }
 }
