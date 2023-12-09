@@ -26,8 +26,6 @@ export const ProtocolGridBase = ({ protocolsData }: Params) => {
   return (
     <Box
       px="1rem"
-      minH="30rem"
-      maxH="30rem"
       overflow="scroll"
       overflowX="auto"
       overflowY="auto"
@@ -46,7 +44,7 @@ export const ProtocolGridBase = ({ protocolsData }: Params) => {
       }}
     >
       <Center>
-        <HStack>
+        <HStack fontWeight={"bold"}>
           <Text>Your Credence Score:</Text>
           {credenceScore === undefined ? (
             <Text color="whiteAlpha.600">[select protocols below]</Text>
