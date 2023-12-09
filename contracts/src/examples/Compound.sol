@@ -6,8 +6,9 @@ import "../Connector.sol";
 import "../interface/IConnector.sol";
 import "../interface/ICore.sol";
 
-contract Aave is ConnectorBuilder{
+contract Compound is ConnectorSubscriber{
 
+    address coreAddress;
     mapping(address => uint256) public balances;
 
     function deposit() public payable {
@@ -27,18 +28,14 @@ contract Aave is ConnectorBuilder{
         return balances[msg.sender];
     }
 
-    function createConnector() public override {
-        Connector addr = new Connector();
-        PointOfConcern[] memory points = new PointOfConcern[](4);
-        points[0].weightage = 5;
-        points[1].weightage = 7;
-        points[2].weightage = -3;
-        points[3].weightage = 1;
-        IConnector(address(addr)).defineParams(points, 500);
-    }   
-
-    function registerConnector(address coreAddress) public override {
-        // always call this after create connector in this demo file
-        ICore(coreAddress).subscribeProtocolToConnector(address(this),1);
+    function wrapperSubscribe(address _coreAddress, uint256 id) public {
+        subscribeToConnector(id);
+        coreAddress = _coreAddress;
+    }
+    
+    // to be called after aave connector creation
+    function subscribeToConnector(uint256 id) override {
+        address connector = ICore(coreAddress).connectorId(id);
+        IConnector(connector).enterSubscriptionWhitelist();
     }
 }

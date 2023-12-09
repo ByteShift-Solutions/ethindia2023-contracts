@@ -7,8 +7,8 @@ import "../Connector.sol";
 import "../interface/IConnector.sol";
 import "../interface/ICore.sol";
 
-contract Uniswap is ConnectorBuilder {
-
+contract Uniswap is ConnectorSubscriber {
+    address coreAddress;
     uint256 public totalLiquidity; //total amount of liquidity provider tokens (LPTs) minted (NOTE: that LPT "price" is tied to the ratio, and thus price of the assets within this AMM)
     mapping(address => uint256) public liquidity; //liquidity of each depositor
     IERC20 token; //instantiates the imported contract
@@ -155,18 +155,14 @@ contract Uniswap is ConnectorBuilder {
         return (ethWithdrawn, tokenAmount);
     }
 
-    function createConnector() public override {
-        Connector addr = new Connector();
-        PointOfConcern[] memory points = new PointOfConcern[](4);
-        points[0].weightage = 5;
-        points[1].weightage = 7;
-        points[2].weightage = -3;
-        points[3].weightage = 1;
-        IConnector(address(addr)).defineParams(points, 500);
-    }   
+    function wrapperSubscribe(address _coreAddress, uint256 id) public {
+        subscribeToConnector(id);
+        coreAddress = _coreAddress;
+    }
 
-    function registerConnector(address coreAddress) public override {
-        // always call this after create connector in this demo file
-        ICore(coreAddress).subscribeProtocolToConnector(address(this),1);
+   // to be called after uniswap connector creation
+    function subscribeToConnector(uint256 id) override {
+        address connector = ICore(coreAddress).connectorId(id);
+        IConnector(connector).enterSubscriptionWhitelist();
     }
 }
