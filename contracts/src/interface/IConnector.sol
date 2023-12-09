@@ -21,9 +21,6 @@ interface IConnector {
 
     function getCibilScore(address user) external view returns (uint256);
 
-    // override as public in implementation
-    function calculateNewScore(uint256 x) external;
-
     // from core
     function enterSubscriptionWhitelist() external;
 
