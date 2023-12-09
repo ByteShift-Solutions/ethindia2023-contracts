@@ -26,8 +26,6 @@ export const ProtocolGridBase = ({ protocolsData }: Params) => {
   return (
     <Box
       px="1rem"
-      minH="30rem"
-      maxH="30rem"
       overflow="scroll"
       overflowX="auto"
       overflowY="auto"
