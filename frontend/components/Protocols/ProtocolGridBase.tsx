@@ -44,7 +44,7 @@ export const ProtocolGridBase = ({ protocolsData }: Params) => {
       }}
     >
       <Center>
-        <HStack>
+        <HStack fontWeight={"bold"}>
           <Text>Your Credence Score:</Text>
           {credenceScore === undefined ? (
             <Text color="whiteAlpha.600">[select protocols below]</Text>

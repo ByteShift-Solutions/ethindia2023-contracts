@@ -9,10 +9,10 @@ interface Params extends ProtocolDataType {
 export const ProtocolInteractItem = ({ name, url, href }: Params) => {
   return (
     <GridItem
-      border="2px solid"
+      border="4px solid"
       w="14rem"
-      borderColor={"gray.500"}
-      bg={"whiteAlpha.800"}
+      borderColor={"blue.500"}
+      bg={"white"}
       color={"black"}
       _hover={{
         cursor: "pointer",
