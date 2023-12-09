@@ -15,7 +15,7 @@ contract Core is ERC721("score", "SCR") {
 
     uint256 id = 1; // rename
     uint256 userId = 1; // rename
-    mapping(uint256 => address) connectorId; // rename
+    mapping(uint256 => address) public connectorId; // rename
     mapping(address => User) userInfo;
     mapping(address => uint256) protocolToConnector;
     mapping(address => bool) whitelistedTokens;

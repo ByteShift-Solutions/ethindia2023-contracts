@@ -6,4 +6,6 @@ interface ICore {
         address protocolAddress,
         uint256 targetConnectorId
     ) external;
+
+    function connectorId(uint256 id) external returns (address);
 }

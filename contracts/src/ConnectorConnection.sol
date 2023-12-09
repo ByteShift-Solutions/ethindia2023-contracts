@@ -13,5 +13,5 @@ abstract contract ConnectorBuilder {
 }
 
 abstract contract ConnectorSubscriber {
- function subscribeToConnector(uint256 connectorId) public {}
+ function subscribeToConnector(uint256 connectorId) virtual public {}
 }
