@@ -2,8 +2,12 @@
 pragma solidity ^0.8.3;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "../ConnectorConnection.sol";
+import "../Connector.sol";
+import "../interface/IConnector.sol";
+import "../interface/ICore.sol";
 
-contract Uniswap {
+contract Uniswap is ConnectorBuilder {
 
     uint256 public totalLiquidity; //total amount of liquidity provider tokens (LPTs) minted (NOTE: that LPT "price" is tied to the ratio, and thus price of the assets within this AMM)
     mapping(address => uint256) public liquidity; //liquidity of each depositor
@@ -149,5 +153,20 @@ contract Uniswap {
         require(token.transfer(msg.sender, tokenAmount));
         emit LiquidityRemoved(msg.sender, amount, ethWithdrawn, tokenAmount);
         return (ethWithdrawn, tokenAmount);
+    }
+
+    function createConnector() public override {
+        Connector addr = new Connector();
+        PointOfConcern[] memory points = new PointOfConcern[](4);
+        points[0].weightage = 5;
+        points[1].weightage = 7;
+        points[2].weightage = -3;
+        points[3].weightage = 1;
+        IConnector(address(addr)).defineParams(points, 500);
+    }   
+
+    function registerConnector(address coreAddress) public override {
+        // always call this after create connector in this demo file
+        ICore(coreAddress).subscribeProtocolToConnector(address(this),1);
     }
 }

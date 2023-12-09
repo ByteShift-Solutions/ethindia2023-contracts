@@ -1,6 +1,12 @@
 // SPDX-License-Identifier: MIT
+pragma solidity ^0.8.3;
 
-contract Aave {
+import "../ConnectorConnection.sol";
+import "../Connector.sol";
+import "../interface/IConnector.sol";
+import "../interface/ICore.sol";
+
+contract Aave is ConnectorBuilder{
 
     mapping(address => uint256) public balances;
 
@@ -19,5 +25,20 @@ contract Aave {
 
     function checkBalance() public view returns (uint256) {
         return balances[msg.sender];
+    }
+
+    function createConnector() public override {
+        Connector addr = new Connector();
+        PointOfConcern[] memory points = new PointOfConcern[](4);
+        points[0].weightage = 5;
+        points[1].weightage = 7;
+        points[2].weightage = -3;
+        points[3].weightage = 1;
+        IConnector(address(addr)).defineParams(points, 500);
+    }   
+
+    function registerConnector(address coreAddress) public override {
+        // always call this after create connector in this demo file
+        ICore(coreAddress).subscribeProtocolToConnector(address(this),1);
     }
 }
