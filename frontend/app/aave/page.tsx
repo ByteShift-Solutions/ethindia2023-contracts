@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Container,
@@ -15,14 +15,75 @@ import {
   Flex,
   Button,
 } from "@chakra-ui/react";
+import {
+  erc20ABI,
+  useContractRead,
+  useAccount,
+  usePrepareContractWrite,
+  useContractWrite,
+} from "wagmi";
+import { formatEther, maxUint256, parseEther } from "viem";
 import MasterLayout from "@/components/MasterLayout";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import Link from "next/link";
 import { DarkButton } from "@/components/DarkButton";
+import { aTokenABI } from "@/abi/aToken";
+
+const DAI = "0x4fEe0DA6C3B8baEAABFaaa2959bdE62D85074CC6";
+const aDAI = "0x0d92849fA073415297f25adEC0112Fa80abCf89A";
 
 const Aave = () => {
-  const [balance, setBalance] = useState<string>("0");
-  const [amount, setAmount] = useState<string>();
+  const { address } = useAccount();
+
+  const [balanceInETH, setBalanceInETH] = useState<string>("0");
+  const [amountInETH, setAmountInETH] = useState<string>();
+
+  const { data: daiBalance } = useContractRead({
+    address: DAI,
+    abi: erc20ABI,
+    functionName: "balanceOf",
+    args: [address!],
+    enabled: !!address,
+  });
+
+  const { data: daiAllowance, refetch: refetchAllowance } = useContractRead({
+    address: DAI,
+    abi: erc20ABI,
+    functionName: "allowance",
+    args: [address!, aDAI],
+    enabled: !!address,
+    watch: true,
+  });
+
+  const { config: approveConfig } = usePrepareContractWrite({
+    address: DAI,
+    abi: erc20ABI,
+    functionName: "approve",
+    args: [aDAI, maxUint256],
+    enabled: !!address && !daiAllowance,
+    onSuccess: () => {
+      refetchAllowance();
+    },
+  });
+
+  const { config: mintConfig } = usePrepareContractWrite({
+    address: aDAI,
+    abi: aTokenABI,
+    functionName: "mint",
+    args: [parseEther(amountInETH ?? "0"), address!],
+    enabled: !!address && !!amountInETH && !!daiAllowance,
+  });
+
+  const { write: approve, isLoading: isApproveLoading } =
+    useContractWrite(approveConfig);
+  const { write: mint, isLoading: isMintLoading } =
+    useContractWrite(mintConfig);
+
+  useEffect(() => {
+    if (daiBalance) {
+      setBalanceInETH(formatEther(daiBalance));
+    }
+  }, [daiBalance]);
 
   return (
     <MasterLayout hideConnectWalletBtn={false}>
@@ -47,25 +108,46 @@ const Aave = () => {
           <Flex>
             <FormLabel>Amount to deposit</FormLabel>
             <Spacer />
-            <HStack fontSize={"sm"} cursor="pointer">
+            <HStack
+              fontSize={"sm"}
+              cursor="pointer"
+              onClick={() => setAmountInETH(balanceInETH)}
+            >
               <Text>Balance: </Text>
               <Text
                 _hover={{
                   color: "blue.300",
                 }}
               >
-                {balance}
+                {balanceInETH}
               </Text>
             </HStack>
           </Flex>
           <Input
             type="number"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
+            value={amountInETH}
+            onChange={(e) => setAmountInETH(e.target.value)}
           />
         </FormControl>
         <Center mt={4}>
-          <DarkButton>Deposit</DarkButton>
+          <HStack spacing={4}>
+            {(daiAllowance === undefined || !daiAllowance) && (
+              <DarkButton
+                isLoading={isApproveLoading}
+                isDisabled={!approve}
+                onClick={() => approve?.()}
+              >
+                1. Approve
+              </DarkButton>
+            )}
+            <DarkButton
+              isLoading={isMintLoading}
+              isDisabled={!mint}
+              onClick={() => mint?.()}
+            >
+              {daiAllowance === undefined || !daiAllowance ? "2." : ""} Deposit
+            </DarkButton>
+          </HStack>
         </Center>
       </Container>
     </MasterLayout>
