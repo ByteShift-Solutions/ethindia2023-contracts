@@ -3,13 +3,14 @@ pragma solidity ^0.8.13;
 
 import "forge-std/Script.sol";
 import "../src/examples/Aave.sol";
+import "../src/mocks/mockToken.sol";
 
 contract AaveScript is Script {
     function run() external {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
-
-        Aave aave = new Aave();
+        MockToken token = new MockToken();
+        Aave aave = new Aave("Aave","Aave",address(token));
 
         vm.stopBroadcast();
     }
