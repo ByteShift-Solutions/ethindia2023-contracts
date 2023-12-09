@@ -7,9 +7,8 @@ import "../interface/IConnector.sol";
 import "../interface/ICore.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
-
-contract Compound is ConnectorSubscriber, ERC20{
- IERC20 public test;
+contract Compound is ConnectorSubscriber, ERC20 {
+    IERC20 public test;
     address connectorAddr;
 
     constructor(
@@ -21,11 +20,11 @@ contract Compound is ConnectorSubscriber, ERC20{
     }
 
     /// @notice user should have given set TEST token approval
-   function mint(uint256 amount, address to) external {
+    function mint(uint256 amount, address to) external {
         test.transferFrom(msg.sender, address(this), amount);
         PointOfConcern[] memory points = new PointOfConcern[](1);
         points[0].weightage = 5;
-        IConnector(connectorAddr).updateCibilScore(msg.sender,points);
+        IConnector(connectorAddr).updateCibilScore(msg.sender, points);
         _mint(to, amount);
     }
 
@@ -34,14 +33,13 @@ contract Compound is ConnectorSubscriber, ERC20{
         test.transfer(msg.sender, amount);
     }
 
-
     function wrapperSubscribe(address _coreAddress, uint256 id) public {
         subscribeToConnector(id);
         connectorAddr = _coreAddress;
     }
-    
+
     // to be called after aave connector creation
-    function subscribeToConnector(uint256 id) override {
+    function subscribeToConnector(uint256 id) public override {
         address connector = ICore(connectorAddr).connectorId(id);
         IConnector(connector).enterSubscriptionWhitelist();
     }

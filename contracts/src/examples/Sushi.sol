@@ -18,17 +18,32 @@ contract Uniswap is ConnectorSubscriber {
     /**
      * @notice Emitted when ethToToken() swap transacted
      */
-    event EthToTokenSwap(address swapper, string txDetails, uint256 ethInput, uint256 tokenOutput);
+    event EthToTokenSwap(
+        address swapper,
+        string txDetails,
+        uint256 ethInput,
+        uint256 tokenOutput
+    );
 
     /**
      * @notice Emitted when tokenToEth() swap transacted
      */
-    event TokenToEthSwap(address swapper, string txDetails, uint256 tokensInput, uint256 ethOutput);
+    event TokenToEthSwap(
+        address swapper,
+        string txDetails,
+        uint256 tokensInput,
+        uint256 ethOutput
+    );
 
     /**
      * @notice Emitted when liquidity provided to DEX and mints LPTs.
      */
-    event LiquidityProvided(address liquidityProvider, uint256 tokensInput, uint256 ethInput, uint256 liquidityMinted);
+    event LiquidityProvided(
+        address liquidityProvider,
+        uint256 tokensInput,
+        uint256 ethInput,
+        uint256 liquidityMinted
+    );
 
     /**
      * @notice Emitted when liquidity removed from DEX and decreases LPT count within DEX.
@@ -58,7 +73,10 @@ contract Uniswap is ConnectorSubscriber {
         require(totalLiquidity == 0, "DEX: init - already has liquidity");
         totalLiquidity = address(this).balance;
         liquidity[msg.sender] = totalLiquidity;
-        require(token.transferFrom(msg.sender, address(this), tokens), "DEX: init - transfer did not transact");
+        require(
+            token.transferFrom(msg.sender, address(this), tokens),
+            "DEX: init - transfer did not transact"
+        );
         return totalLiquidity;
     }
 
@@ -92,8 +110,16 @@ contract Uniswap is ConnectorSubscriber {
         uint256 token_reserve = token.balanceOf(address(this));
         uint256 tokenOutput = price(msg.value, ethReserve, token_reserve);
 
-        require(token.transfer(msg.sender, tokenOutput), "ethToToken(): reverted swap.");
-        emit EthToTokenSwap(msg.sender, "Eth to Balloons", msg.value, tokenOutput);
+        require(
+            token.transfer(msg.sender, tokenOutput),
+            "ethToToken(): reverted swap."
+        );
+        emit EthToTokenSwap(
+            msg.sender,
+            "Eth to Balloons",
+            msg.value,
+            tokenOutput
+        );
         return tokenOutput;
     }
 
@@ -103,11 +129,23 @@ contract Uniswap is ConnectorSubscriber {
     function tokenToEth(uint256 tokenInput) public returns (uint256 ethOutput) {
         require(tokenInput > 0, "cannot swap 0 tokens");
         uint256 token_reserve = token.balanceOf(address(this));
-        uint256 ethOutput = price(tokenInput, token_reserve, address(this).balance);
-        require(token.transferFrom(msg.sender, address(this), tokenInput), "tokenToEth(): reverted swap.");
-        (bool sent, ) = msg.sender.call{ value: ethOutput }("");
+        uint256 ethOutput = price(
+            tokenInput,
+            token_reserve,
+            address(this).balance
+        );
+        require(
+            token.transferFrom(msg.sender, address(this), tokenInput),
+            "tokenToEth(): reverted swap."
+        );
+        (bool sent, ) = msg.sender.call{value: ethOutput}("");
         require(sent, "tokenToEth: revert in transferring eth to you!");
-        emit TokenToEthSwap(msg.sender, "Balloons to ETH", ethOutput, tokenInput);
+        emit TokenToEthSwap(
+            msg.sender,
+            "Balloons to ETH",
+            ethOutput,
+            tokenInput
+        );
         return ethOutput;
     }
 
@@ -123,13 +161,18 @@ contract Uniswap is ConnectorSubscriber {
         uint256 tokenReserve = token.balanceOf(address(this));
         uint256 tokenDeposit;
 
-        tokenDeposit = (msg.value * tokenReserve / ethReserve) + 1;
-        uint256 liquidityMinted = msg.value * totalLiquidity / ethReserve;
+        tokenDeposit = ((msg.value * tokenReserve) / ethReserve) + 1;
+        uint256 liquidityMinted = (msg.value * totalLiquidity) / ethReserve;
         liquidity[msg.sender] += liquidityMinted;
         totalLiquidity += liquidityMinted;
 
         require(token.transferFrom(msg.sender, address(this), tokenDeposit));
-        emit LiquidityProvided(msg.sender, liquidityMinted, msg.value, tokenDeposit);
+        emit LiquidityProvided(
+            msg.sender,
+            liquidityMinted,
+            msg.value,
+            tokenDeposit
+        );
         return tokenDeposit;
     }
 
@@ -137,18 +180,23 @@ contract Uniswap is ConnectorSubscriber {
      * @notice allows withdrawal of $BAL and $ETH from liquidity pool
      * NOTE: with this current code, the msg caller could end up getting very little back if the liquidity is super low in the pool. I guess they could see that with the UI.
      */
-    function withdraw(uint256 amount) public returns (uint256 eth_amount, uint256 token_amount) {
-        require(liquidity[msg.sender] >= amount, "withdraw: sender does not have enough liquidity to withdraw.");
+    function withdraw(
+        uint256 amount
+    ) public returns (uint256 eth_amount, uint256 token_amount) {
+        require(
+            liquidity[msg.sender] >= amount,
+            "withdraw: sender does not have enough liquidity to withdraw."
+        );
         uint256 ethReserve = address(this).balance;
         uint256 tokenReserve = token.balanceOf(address(this));
         uint256 ethWithdrawn;
 
-        ethWithdrawn = amount * ethReserve / totalLiquidity;
+        ethWithdrawn = (amount * ethReserve) / totalLiquidity;
 
-        uint256 tokenAmount = amount * tokenReserve / totalLiquidity;
+        uint256 tokenAmount = (amount * tokenReserve) / totalLiquidity;
         liquidity[msg.sender] -= amount;
         totalLiquidity -= amount;
-        (bool sent, ) = payable(msg.sender).call{ value: ethWithdrawn }("");
+        (bool sent, ) = payable(msg.sender).call{value: ethWithdrawn}("");
         require(sent, "withdraw(): revert in transferring eth to you!");
         require(token.transfer(msg.sender, tokenAmount));
         emit LiquidityRemoved(msg.sender, amount, ethWithdrawn, tokenAmount);
@@ -160,8 +208,8 @@ contract Uniswap is ConnectorSubscriber {
         coreAddress = _coreAddress;
     }
 
-   // to be called after uniswap connector creation
-    function subscribeToConnector(uint256 id) override {
+    // to be called after uniswap connector creation
+    function subscribeToConnector(uint256 id) public override {
         address connector = ICore(coreAddress).connectorId(id);
         IConnector(connector).enterSubscriptionWhitelist();
     }
