@@ -8,25 +8,28 @@ import "../interface/ICore.sol";
 
 contract Compound is ConnectorSubscriber{
 
-    address coreAddress;
-    mapping(address => uint256) public balances;
+    address connetorAddr;
 
-    function deposit() public payable {
-        require(msg.value > 0, "Deposit amount should be greater than 0");
-        balances[msg.sender] += msg.value;
+    constructor(
+        string memory name_,
+        string memory symbol_,
+        IERC20 test_
+    ) ERC20(name_, symbol_) {
+        test = test_;
     }
 
-    function withdraw(uint256 amount) public {
-        require(amount > 0, "Withdrawal amount should be greater than 0");
-        require(balances[msg.sender] >= amount, "Insufficient balance");
-
-        balances[msg.sender] -= amount;
-        payable(msg.sender).transfer(amount);
+    /// @notice user should have given set TEST token approval
+    function mint(uint256 amount, address to) external {
+        test.transferFrom(msg.sender, address(this), amount);
+        IConnector(connetorAddr).updateCibilScore(msg.sender,PointOfConcern(1,15));
+        _mint(to, amount);
     }
 
-    function checkBalance() public view returns (uint256) {
-        return balances[msg.sender];
+    function burn(uint256 amount) external {
+        _burn(msg.sender, amount);
+        test.transfer(msg.sender, amount);
     }
+
 
     function wrapperSubscribe(address _coreAddress, uint256 id) public {
         subscribeToConnector(id);
