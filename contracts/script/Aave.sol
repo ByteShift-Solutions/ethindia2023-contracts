@@ -9,8 +9,8 @@ contract AaveScript is Script {
     function run() external {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         vm.startBroadcast(deployerPrivateKey);
-        MockToken token = new MockToken();
-        Aave aave = new Aave("Aave","Aave",address(token));
+        MockToken token = new MockToken("DAI", "DAI");
+        Aave aave = new Aave("Aave", "Aave", address(token));
 
         vm.stopBroadcast();
     }
