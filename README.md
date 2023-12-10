@@ -1,0 +1,7 @@
+## Deployment
+
+| chain           | generator                                  | Mock token                                 | aave                                       | connector                                  | core                                       | uniswap                                    |
+| --------------- | ------------------------------------------ | ------------------------------------------ | ------------------------------------------ | ------------------------------------------ | ------------------------------------------ | ------------------------------------------ |
+| Scroll (534351) | 0x7d459a283fbB1bdf76F682a8e33F22526804D595 | 0xfA91c4C5C12C18ed73E5DD8eE3Ddcc145e6A67F2 | 0xe3aa62D983E06CE9e098Daf5669395AE1f5B9155 | 0x0cA783F57ae475dF23Fb5d2a819cd262f3C3ffbB | 0x4629D2f7b6D8ce9a56E5f1Feaa90AB0C1A34dc86 | 0x6DA6d14765e933be8F335B4a64a135719d61f83c |
+| Celo (44787)    | 0xe3aa62D983E06CE9e098Daf5669395AE1f5B9155 | 0x5444Ef47042b76178d1C21Ff519f84d7A621d175 | 0x0cA783F57ae475dF23Fb5d2a819cd262f3C3ffbB | 0xe92764589068136b0c71BcB6ac165D58833ab682 | 0xa978f40Ff8b626f27Be6d9e1Cb9c1a13C2dB8505 | 0x9975b28738bf084EC8c4b728C11551D939F03418 |
+| Mantle (5001)   | 0x824d4f8299B9495BD1B145C5b95aB1530220Ce8F | 0x5931CD0bD6AE26623107eA805ed422F878dbc594 | 0x7d459a283fbB1bdf76F682a8e33F22526804D595 | 0x0cA783F57ae475dF23Fb5d2a819cd262f3C3ffbB | 0xe3aa62D983E06CE9e098Daf5669395AE1f5B9155 | 0x4629D2f7b6D8ce9a56E5f1Feaa90AB0C1A34dc86 |
