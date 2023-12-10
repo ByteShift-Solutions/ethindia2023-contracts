@@ -39,12 +39,14 @@ contract Core is ERC721("score", "SCR") {
             address connector = connectorId[ids[i]];
             score += IConnector(connector).getCibilScore(user);
         }
+        return score / length;
     }
 
     function userRegistration() public {
         require(userInfo[msg.sender].id == 0, "already registered");
+        _mint(msg.sender, ++userId);
         User storage newUser = userInfo[msg.sender];
-        newUser.id = userId++;
+        newUser.id = userId;
     }
 
     function depositSecurity() public payable onlyRegisteredUser(msg.sender) {
