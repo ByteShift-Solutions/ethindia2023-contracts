@@ -19,6 +19,7 @@ import {
   erc20ABI,
   useContractRead,
   useAccount,
+  useChainId,
   usePrepareContractWrite,
   useContractWrite,
 } from "wagmi";
@@ -28,18 +29,17 @@ import { ChevronLeftIcon } from "@chakra-ui/icons";
 import Link from "next/link";
 import { DarkButton } from "@/components/DarkButton";
 import { aTokenABI } from "@/abi/aToken";
-
-const DAI = "0x4fEe0DA6C3B8baEAABFaaa2959bdE62D85074CC6";
-const aDAI = "0x0d92849fA073415297f25adEC0112Fa80abCf89A";
+import { chainIdToAddresses } from "@/constants";
 
 const Aave = () => {
   const { address } = useAccount();
+  const chainId = useChainId();
 
   const [balanceInETH, setBalanceInETH] = useState<string>("0");
   const [amountInETH, setAmountInETH] = useState<string>();
 
   const { data: daiBalance } = useContractRead({
-    address: DAI,
+    address: chainIdToAddresses[chainId].DAI,
     abi: erc20ABI,
     functionName: "balanceOf",
     args: [address!],
@@ -47,19 +47,19 @@ const Aave = () => {
   });
 
   const { data: daiAllowance, refetch: refetchAllowance } = useContractRead({
-    address: DAI,
+    address: chainIdToAddresses[chainId].DAI,
     abi: erc20ABI,
     functionName: "allowance",
-    args: [address!, aDAI],
+    args: [address!, chainIdToAddresses[chainId].aDAI],
     enabled: !!address,
     watch: true,
   });
 
   const { config: approveConfig } = usePrepareContractWrite({
-    address: DAI,
+    address: chainIdToAddresses[chainId].DAI,
     abi: erc20ABI,
     functionName: "approve",
-    args: [aDAI, maxUint256],
+    args: [chainIdToAddresses[chainId].aDAI, maxUint256],
     enabled: !!address && !daiAllowance,
     onSuccess: () => {
       refetchAllowance();
@@ -67,7 +67,7 @@ const Aave = () => {
   });
 
   const { config: mintConfig } = usePrepareContractWrite({
-    address: aDAI,
+    address: chainIdToAddresses[chainId].aDAI,
     abi: aTokenABI,
     functionName: "mint",
     args: [parseEther(amountInETH ?? "0"), address!],

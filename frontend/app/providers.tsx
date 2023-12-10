@@ -16,14 +16,14 @@ import {
   rainbowWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
-import { sepolia } from "wagmi/chains";
+import { sepolia, scrollSepolia, mantleTestnet } from "wagmi/chains";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { publicProvider } from "wagmi/providers/public";
 import MasterLayout from "@/components/MasterLayout";
 
 const { chains, publicClient } = configureChains(
   // the first chain is used by rainbowWallet to determine which chain to use
-  [sepolia],
+  [sepolia, scrollSepolia, mantleTestnet],
   [
     // NOTE: removing these as getting rate limited by Alchemy
     // jsonRpcProvider({
