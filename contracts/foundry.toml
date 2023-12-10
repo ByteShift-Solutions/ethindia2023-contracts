@@ -13,5 +13,8 @@ mumbai = "https://polygon-mumbai.infura.io/v3/${INFURA_KEY}"
 polygon_zkevm = "https://zkevm-rpc.com"
 polygon_zkevm_testnet = "https://rpc.public.zkevm-test.net"
 scroll_tesnet = "https://sepolia-rpc.scroll.io/"
+ok_x1_tesnet = ""
+celo_testnet = "https://alfajores-forno.celo-testnet.org"
+mantle_testnet = "https://rpc.testnet.mantle.xyz"
 
 # See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options
