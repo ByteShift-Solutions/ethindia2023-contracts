@@ -1,4 +1,9 @@
-import { sepolia, scrollSepolia, mantleTestnet } from "wagmi/chains";
+import {
+  sepolia,
+  scrollSepolia,
+  mantleTestnet,
+  celoAlfajores,
+} from "wagmi/chains";
 import { Chain } from "@wagmi/core";
 
 export const chainIdToAddresses: {
@@ -16,19 +21,23 @@ export const chainIdToAddresses: {
     aDAI: "0xe3aa62D983E06CE9e098Daf5669395AE1f5B9155",
   },
   [mantleTestnet.id]: {
-    DAI: "0x00",
-    aDAI: "0x00",
+    DAI: "0x5931CD0bD6AE26623107eA805ed422F878dbc594",
+    aDAI: "0x7d459a283fbB1bdf76F682a8e33F22526804D595",
+  },
+  [celoAlfajores.id]: {
+    DAI: "0x5444Ef47042b76178d1C21Ff519f84d7A621d175",
+    aDAI: "0x0cA783F57ae475dF23Fb5d2a819cd262f3C3ffbB",
   },
 };
 
 export const okx1 = {
   id: 43_114,
-  name: "Avalanche",
-  network: "avalanche",
+  name: "OKX1",
+  network: "OKX1",
   nativeCurrency: {
     decimals: 18,
-    name: "Avalanche",
-    symbol: "AVAX",
+    name: "OKX1",
+    symbol: "OKX1",
   },
   rpcUrls: {
     public: { http: ["https://api.avax.network/ext/bc/C/rpc"] },
