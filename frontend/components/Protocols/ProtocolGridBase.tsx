@@ -7,6 +7,8 @@ interface Params {
   protocolsData: ProtocolDataType[];
 }
 
+const creditScores = [452, 720, 540, 836];
+
 export const ProtocolGridBase = ({ protocolsData }: Params) => {
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [credenceScore, setCredenceScore] = useState<number>();
@@ -16,9 +18,8 @@ export const ProtocolGridBase = ({ protocolsData }: Params) => {
       setCredenceScore(undefined);
     } else {
       setCredenceScore(
-        selectedIds.reduce((acc, curr) => {
-          return acc + 420;
-        }, 0)
+        selectedIds.reduce((acc, id) => acc + creditScores[id], 0) /
+          selectedIds.length
       );
     }
   }, [selectedIds]);
@@ -62,7 +63,7 @@ export const ProtocolGridBase = ({ protocolsData }: Params) => {
             name={p.name}
             url={p.url}
             isSelected={selectedIds.includes(i)}
-            score={420}
+            score={creditScores[i]}
             onClick={() =>
               setSelectedIds((s) => {
                 if (s.includes(i)) {
