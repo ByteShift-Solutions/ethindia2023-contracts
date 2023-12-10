@@ -6,8 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 contract MockToken is ERC20 {
     IERC20 public test;
 
-    constructor() ERC20("mock", "mock") {
-    }
+    constructor(string memory name, string memory symbol) ERC20(name, symbol) {}
 
     /// @notice user should have given set TEST token approval
     function mint(uint256 amount, address to) external {
